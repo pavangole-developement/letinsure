@@ -1,4 +1,3 @@
-import { compareSync } from 'bcrypt';
 import fs from 'fs';
 
 //read keys.json

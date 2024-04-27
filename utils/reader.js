@@ -60,15 +60,5 @@ function removeFirstLine(filePath) {
 
 // Usage
 const filePath = 'private_keys.txt'; // Replace with your file path
-readFirstLine(filePath)
-    .then(({ key, value }) => {
-        console.log('Key:', key);
-        console.log('Value:', value);
-        return removeFirstLine(filePath);
-    })
-    .then(() => {
-        console.log('First line removed from the file.');
-    })
-    .catch((error) => {
-        console.error(error);
-    });
+module.exports = { readFirstLine, removeFirstLine, filePath };
+

@@ -18,24 +18,30 @@ const contractAddress = fs.readFileSync('./build/transacionDataAddress.bin', 'ut
 const contract = new web3.eth.Contract(contractAbi, contractAddress);
 
 // Example function to store a new message
-async function storeMessage(receiver, content) {
+async function storeMessage(sender, receiver, content) {
     // Send a transaction to the contract to store the message
     // const accounts = await web3.eth.getAccounts();
 
-    // const sender = accounts[0]; // Assuming you want to use the first account
-    const sender = "0x6221D320D0C704dCd2836beF935CdAb20AdE66A3";
+    // const sender = accounts[0]; // Assuming you want to use the first account;
     //Estimate gas required for the transaction
     const gasEstimateBigInt = await contract.methods.storeMessage(receiver, content).estimateGas({ from: sender });
     const gasEstimate = Number(gasEstimateBigInt); // Convert BigInt to number
 
     // Set gas limit to a value slightly higher than the estimated gas
-    const gasLimit = Math.ceil(gasEstimate * 70); // Increase by 10%
+    const gasLimit = Math.ceil(gasEstimate * 10); // Increase by 10%
+    const gasPriceinWei = await web3.eth.getGasPrice();
+    const gasPrice = Number(gasPriceinWei); // Convert from Wei to Ether
+    const totalCostInEther = (gasLimit * gasPrice) / 1e18; // Convert gas to Ether
+    console.log(totalCostInEther);
+
+    console.log('Total cost in Ether:', totalCostInEther);
     // Send transaction with gas limit
     await contract.methods.storeMessage(receiver, content).send({
         from: sender,
         gas: gasLimit,
     });
     console.log('Message stored successfully.');
+    return "Message sent successfully";
 }
 
 // Example function to retrieve all messages sent by a specific sender
@@ -47,12 +53,19 @@ async function getMessagesSentBySender(sender) {
     const contents = result[2];
 
     console.log('Messages sent by', sender);
+    const combinedData = [];
+
     for (let i = 0; i < senders.length; i++) {
-        console.log('Sender:', senders[i]);
-        console.log('Receiver:', receivers[i]);
-        console.log('Content:', contents[i]);
-        console.log('------------------');
+        const data = {
+            sender: senders[i],
+            receiver: receivers[i],
+            content: contents[i]
+        };
+        combinedData.push(data);
     }
+
+    console.log(JSON.stringify(combinedData, null, 2));
+    return JSON.stringify(combinedData, null, 2);
 }
 
 // Example function to retrieve all messages received by a specific receiver
@@ -64,15 +77,26 @@ async function getMessagesReceivedByReceiver(receiver) {
     const contents = result[2];
 
     console.log('Messages received by', receiver);
+    const combinedData = [];
+
     for (let i = 0; i < senders.length; i++) {
-        console.log('Sender:', senders[i]);
-        console.log('Receiver:', receivers[i]);
-        console.log('Content:', contents[i]);
-        console.log('------------------');
+        const data = {
+            sender: senders[i],
+            receiver: receivers[i],
+            content: contents[i]
+        };
+        combinedData.push(data);
     }
+
+    console.log(JSON.stringify(combinedData, null, 2));
+    return JSON.stringify(combinedData, null, 2);
+
 }
 
 // Example usage
-storeMessage('0xA0D1BFeA7deCA07870ed0B5a5dc686a9b634CB78', 'Hello world!'); // Replace '0xReceiverAddress' with the receiver's address
-getMessagesSentBySender('0xf5F9621d6f85D4184484Cd2f79e71E203d796B95'); // Replace '0xSenderAddress' with the sender's address
-getMessagesReceivedByReceiver('0xA0D1BFeA7deCA07870ed0B5a5dc686a9b634CB78'); // Replace '0xReceiverAddress' with the receiver's address
+var sender = '0xC107faB5Ca67e3B2D924A2911A617B04ca2C5adF'
+var receiver = '0x2Ac3a1EC7024A085A21cd09Ca353FcA4A5FEa7eA'
+var content = "abra ka dabra"
+// storeMessage(sender, receiver, content); // Replace '0xReceiverAddress' with the receiver's address
+// getMessagesSentBySender(sender); // Replace '0xSenderAddress' with the sender's address
+getMessagesReceivedByReceiver(receiver); // Replace '0xReceiverAddress' with the receiver's address

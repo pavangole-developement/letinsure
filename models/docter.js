@@ -5,6 +5,7 @@ const docterSchema = new mongoose.Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     address: { type: String },
+    key: { type: String },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });
