@@ -3,22 +3,10 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "address",
 				"name": "patient",
 				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "doctor",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "date",
-				"type": "uint256"
 			}
 		],
 		"name": "AppointmentClosed",
@@ -28,22 +16,10 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "address",
 				"name": "patient",
 				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "doctor",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "date",
-				"type": "uint256"
 			}
 		],
 		"name": "AppointmentCreated",
@@ -53,27 +29,15 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "address",
 				"name": "patient",
 				"type": "address"
 			},
 			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "doctor",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "date",
-				"type": "uint256"
-			},
-			{
 				"indexed": false,
 				"internalType": "string",
-				"name": "details",
+				"name": "data",
 				"type": "string"
 			}
 		],
@@ -88,14 +52,14 @@
 				"type": "string"
 			}
 		],
-		"name": "addDataForPatient",
+		"name": "addData",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "closeOngoingAppointment",
+		"name": "closeAppointment",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -104,141 +68,41 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_doctor",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "closedAppointments",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "patient",
 				"type": "address"
 			},
 			{
-				"internalType": "uint256",
-				"name": "_date",
-				"type": "uint256"
+				"internalType": "string",
+				"name": "data",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "closed",
+				"type": "bool"
 			}
 		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "createAppointment",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_patient",
-				"type": "address"
-			}
-		],
-		"name": "getClosedAppointments",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "patient",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "doctor",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "date",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "details",
-						"type": "string"
-					},
-					{
-						"internalType": "bool",
-						"name": "closed",
-						"type": "bool"
-					}
-				],
-				"internalType": "struct MedicalAppointment.Appointment[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_doctor",
-				"type": "address"
-			}
-		],
-		"name": "getClosedAppointmentsForDoctor",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "patient",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "doctor",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "date",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "details",
-						"type": "string"
-					},
-					{
-						"internalType": "bool",
-						"name": "closed",
-						"type": "bool"
-					}
-				],
-				"internalType": "struct MedicalAppointment.Appointment[]",
-				"name": "",
-				"type": "tuple[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [],
-		"name": "getDataForClosedAppointmentsDoctor",
-		"outputs": [
-			{
-				"internalType": "string[]",
-				"name": "",
-				"type": "string[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getDataForClosedAppointmentsPatient",
-		"outputs": [
-			{
-				"internalType": "string[]",
-				"name": "",
-				"type": "string[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getDataForOngoingAppointmentPatient",
+		"name": "getClosedAppointmentData",
 		"outputs": [
 			{
 				"internalType": "string",
@@ -251,12 +115,38 @@
 	},
 	{
 		"inputs": [],
-		"name": "getDataForOngoingAppointmentsDoctor",
+		"name": "getOngoingAppointmentData",
 		"outputs": [
 			{
-				"internalType": "string[]",
+				"internalType": "string",
 				"name": "",
-				"type": "string[]"
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getPatientClosedAppointmentData",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getPatientOngoingAppointmentData",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -266,89 +156,26 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_patient",
+				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "getOngoingAppointment",
+		"name": "ongoingAppointments",
 		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "patient",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "doctor",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "date",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "details",
-						"type": "string"
-					},
-					{
-						"internalType": "bool",
-						"name": "closed",
-						"type": "bool"
-					}
-				],
-				"internalType": "struct MedicalAppointment.Appointment",
-				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_doctor",
+				"name": "patient",
 				"type": "address"
-			}
-		],
-		"name": "getOngoingAppointmentsForDoctor",
-		"outputs": [
+			},
 			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "patient",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "doctor",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "date",
-						"type": "uint256"
-					},
-					{
-						"internalType": "string",
-						"name": "details",
-						"type": "string"
-					},
-					{
-						"internalType": "bool",
-						"name": "closed",
-						"type": "bool"
-					}
-				],
-				"internalType": "struct MedicalAppointment.Appointment[]",
-				"name": "",
-				"type": "tuple[]"
+				"internalType": "string",
+				"name": "data",
+				"type": "string"
+			},
+			{
+				"internalType": "bool",
+				"name": "closed",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
