@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const listRoutes = require('./routes/listRoutes');
+const appointmentRoutes = require('./routes/appointments');
 const session = require('express-session');
 const axios = require('axios');
 const jwt = require('jwt-simple');
@@ -42,6 +43,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/list', listRoutes);
+app.use('/api/appointment', appointmentRoutes);
 // Start the server
 app.get('/', (req, res) => {
     console.log(req.body);

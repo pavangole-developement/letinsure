@@ -1,15 +1,16 @@
-import { Web3 } from 'web3';
-import fs from 'fs';
-import path from 'path';
-const currentFileUrl = import.meta.url;
-const currentDir = path.dirname(new URL(currentFileUrl).pathname);
+const { Web3 } = require('web3');
+const fs = require('fs');
+const path = require('path');
+
+const currentDir = path.dirname(__filename);
 const buildPath = path.resolve(currentDir, 'build');
 const bytecodePath = path.join(buildPath, 'transactionDataBytecode.bin');
 const bytecode = fs.readFileSync(bytecodePath, 'utf8');
 
-//read the json file in ./build/transacionAbi.json
+// Read the JSON file in ./build/transacionAbi.json
 const abiPath = path.join(buildPath, 'transactionAbi.json');
 const contractAbi = JSON.parse(fs.readFileSync(abiPath, 'utf8'));
+
 // Initialize web3 instance
 const web3 = new Web3('http://localhost:7545'); // Update the URL with your Ethereum node URL
 
@@ -19,11 +20,7 @@ const contract = new web3.eth.Contract(contractAbi, contractAddress);
 
 // Example function to store a new message
 async function storeMessage(sender, receiver, content) {
-    // Send a transaction to the contract to store the message
-    // const accounts = await web3.eth.getAccounts();
-
-    // const sender = accounts[0]; // Assuming you want to use the first account;
-    //Estimate gas required for the transaction
+    // Estimate gas required for the transaction
     const gasEstimateBigInt = await contract.methods.storeMessage(receiver, content).estimateGas({ from: sender });
     const gasEstimate = Number(gasEstimateBigInt); // Convert BigInt to number
 
@@ -32,7 +29,6 @@ async function storeMessage(sender, receiver, content) {
     const gasPriceinWei = await web3.eth.getGasPrice();
     const gasPrice = Number(gasPriceinWei); // Convert from Wei to Ether
     const totalCostInEther = (gasLimit * gasPrice) / 1e18; // Convert gas to Ether
-    console.log(totalCostInEther);
 
     console.log('Total cost in Ether:', totalCostInEther);
     // Send transaction with gas limit
@@ -57,7 +53,6 @@ async function getMessagesSentBySender(sender) {
 
     for (let i = 0; i < senders.length; i++) {
         const data = {
-            sender: senders[i],
             receiver: receivers[i],
             content: contents[i]
         };
@@ -82,7 +77,6 @@ async function getMessagesReceivedByReceiver(receiver) {
     for (let i = 0; i < senders.length; i++) {
         const data = {
             sender: senders[i],
-            receiver: receivers[i],
             content: contents[i]
         };
         combinedData.push(data);
@@ -90,13 +84,13 @@ async function getMessagesReceivedByReceiver(receiver) {
 
     console.log(JSON.stringify(combinedData, null, 2));
     return JSON.stringify(combinedData, null, 2);
-
 }
-
 // Example usage
-var sender = '0xC107faB5Ca67e3B2D924A2911A617B04ca2C5adF'
-var receiver = '0x2Ac3a1EC7024A085A21cd09Ca353FcA4A5FEa7eA'
-var content = "abra ka dabra"
-// storeMessage(sender, receiver, content); // Replace '0xReceiverAddress' with the receiver's address
-// getMessagesSentBySender(sender); // Replace '0xSenderAddress' with the sender's address
-getMessagesReceivedByReceiver(receiver); // Replace '0xReceiverAddress' with the receiver's address
+// var sender = '0xC107faB5Ca67e3B2D924A2911A617B04ca2C5adF'
+// var receiver = '0x2Ac3a1EC7024A085A21cd09Ca353FcA4A5FEa7eA'
+// var content = "abra ka dabra"
+//storeMessage(sender, receiver, content); // Replace '0xReceiverAddress' with the receiver's address
+//getMessagesSentBySender(sender); // Replace '0xSenderAddress' with the sender's address
+getMessagesReceivedByReceiver("0xCC68289f79B68dF36bA9C62FB977c1b6e500B9B4"); // Replace '0xReceiverAddress' with the receiver's address
+// Exporting functions
+module.exports = { storeMessage, getMessagesSentBySender, getMessagesReceivedByReceiver };

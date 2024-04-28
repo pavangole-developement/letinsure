@@ -6,11 +6,11 @@ const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
 const currentFileUrl = import.meta.url;
 const currentDir = path.dirname(new URL(currentFileUrl).pathname);
 const buildPath = path.resolve(currentDir,'build');
-const bytecodePath = path.join(buildPath, 'transactionDataBytecode.bin');
+const bytecodePath = path.join(buildPath, 'recordsDataBytecode.bin');
 const bytecode = fs.readFileSync(bytecodePath, 'utf8');
 
 //read the json file in ./build/transacionAbi.json
-const abiPath = path.join(buildPath, 'transactionAbi.json');
+const abiPath = path.join(buildPath, 'recordsAbi.json');
 const abi = JSON.parse(fs.readFileSync(abiPath, 'utf8'));
 
 const myContract = new web3.eth.Contract(abi);
@@ -39,7 +39,7 @@ async function deploy() {
         });
         console.log('Contract deployed at address: ' + tx.options.address);
 
-        const deployedAddressPath = path.join(buildPath, 'transacionDataAddress.bin');
+        const deployedAddressPath = path.join(buildPath, 'recordsDataAddress.bin');
         fs.writeFileSync(deployedAddressPath, tx.options.address);
     } catch (error) {
         console.error(error);

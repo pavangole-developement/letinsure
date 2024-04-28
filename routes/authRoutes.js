@@ -124,7 +124,7 @@ router.post('/login', async (req, res) => {
             address: user.address,
             key: user.key,
         };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }); // Adjust expiration as needed
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '12h' }); // Adjust expiration as needed
         res.cookie('token', token, {
             sameSite: 'lax',
             secure: true,
