@@ -5,71 +5,71 @@ contract MedicalAppointment {
 
     struct Appointment {
         address patient;
-        address doctor;
-        uint256 date;
-        string details;
+        string data;
         bool closed;
     }
 
-    mapping(address => Appointment) private ongoingAppointments;
-    mapping(address => Appointment[]) private closedAppointments;
-    mapping(address => Appointment[]) private doctorAppointments;
-    mapping(address => Appointment[]) private closedDoctorAppointments;
+    mapping(address => Appointment) public ongoingAppointments;
+    mapping(address => Appointment) public closedAppointments;
 
-    event AppointmentCreated(address indexed patient, address indexed doctor, uint256 date);
-    event AppointmentClosed(address indexed patient, address indexed doctor, uint256 date);
-    event DataAdded(address indexed patient, address indexed doctor, uint256 date, string details);
+    event AppointmentCreated(address patient);
+    event AppointmentClosed(address patient);
+    event DataAdded(address patient, string data);
 
-    // Patient creates a new appointment with the doctor
-    function createAppointment(address _doctor, uint256 _date) public {
-        require(ongoingAppointments[msg.sender].patient == address(0), "Patient already has an ongoing appointment");
-        
-        Appointment memory newAppointment = Appointment(msg.sender, _doctor, _date, "", false);
-        ongoingAppointments[msg.sender] = newAppointment;
-        doctorAppointments[_doctor].push(newAppointment);
-        emit AppointmentCreated(msg.sender, _doctor, _date);
+    modifier onlyPatient() {
+        require(ongoingAppointments[msg.sender].patient == msg.sender, "Patient only");
+        _;
     }
 
-    // Doctor adds data for a patient appointment
-    function addDataForPatient(string memory _data) public {
-        require(ongoingAppointments[msg.sender].patient == msg.sender, "No ongoing appointment found for the patient");
-        Appointment storage ongoingAppointment = ongoingAppointments[msg.sender];
-        // Add data for the appointment
-        ongoingAppointment.details = string(abi.encodePacked(ongoingAppointment.details, " ", _data));
-        emit DataAdded(msg.sender, ongoingAppointment.doctor, ongoingAppointment.date, _data);
+    modifier onlyDoctor() {
+        require(ongoingAppointments[msg.sender].patient != msg.sender, "Doctor only");
+        _;
     }
 
-    // Patient closes their ongoing appointment
-    function closeOngoingAppointment() public {
-        require(ongoingAppointments[msg.sender].patient == msg.sender, "No ongoing appointment found for the patient");
-        Appointment storage ongoingAppointment = ongoingAppointments[msg.sender];
-        require(!ongoingAppointment.closed, "Appointment is already closed");
-        // Mark the appointment as closed
-        ongoingAppointment.closed = true;
-        // Move the closed appointment to the closedAppointments mapping
-        closedAppointments[msg.sender].push(ongoingAppointment);
-        emit AppointmentClosed(msg.sender, ongoingAppointment.doctor, ongoingAppointment.date);
-        // Remove the closed appointment from the ongoingAppointments mapping
+    modifier patientHasAppointment() {
+        require(ongoingAppointments[msg.sender].patient != address(0), "Patient has no appointment");
+        _;
+    }
+
+    modifier appointmentNotClosed() {
+        require(!ongoingAppointments[msg.sender].closed, "Appointment is closed");
+        _;
+    }
+
+    function createAppointment() external {
+        require(ongoingAppointments[msg.sender].patient == address(0), "Appointment already exists");
+        ongoingAppointments[msg.sender] = Appointment(msg.sender, "", false);
+        emit AppointmentCreated(msg.sender);
+    }
+
+    function closeAppointment() external onlyPatient appointmentNotClosed {
+        closedAppointments[msg.sender] = ongoingAppointments[msg.sender];
         delete ongoingAppointments[msg.sender];
+        emit AppointmentClosed(msg.sender);
     }
 
-    // Get ongoing appointment for a patient
-    function getOngoingAppointment(address _patient) public view returns (Appointment memory) {
-        return ongoingAppointments[_patient];
+    function addData(string memory _data) external onlyDoctor patientHasAppointment appointmentNotClosed {
+        ongoingAppointments[msg.sender].data = _data;
+        emit DataAdded(ongoingAppointments[msg.sender].patient, _data);
     }
 
-    // Get closed appointments for a patient
-    function getClosedAppointments(address _patient) public view returns (Appointment[] memory) {
-        return closedAppointments[_patient];
+    function getOngoingAppointmentData() external view onlyDoctor returns (string memory) {
+        require(ongoingAppointments[msg.sender].patient != address(0), "No ongoing appointment");
+        return ongoingAppointments[msg.sender].data;
     }
 
-    // Get ongoing appointments for a doctor
-    function getOngoingAppointmentsForDoctor(address _doctor) public view returns (Appointment[] memory) {
-        return doctorAppointments[_doctor];
+    function getClosedAppointmentData() external view onlyDoctor returns (string memory) {
+        require(closedAppointments[msg.sender].patient != address(0), "No closed appointment");
+        return closedAppointments[msg.sender].data;
     }
 
-    // Get closed appointments for a doctor
-    function getClosedAppointmentsForDoctor(address _doctor) public view returns (Appointment[] memory) {
-        return closedDoctorAppointments[_doctor];
+    function getPatientOngoingAppointmentData() external view onlyPatient returns (string memory) {
+        require(ongoingAppointments[msg.sender].patient != address(0), "No ongoing appointment");
+        return ongoingAppointments[msg.sender].data;
+    }
+
+    function getPatientClosedAppointmentData() external view onlyPatient returns (string memory) {
+        require(closedAppointments[msg.sender].patient != address(0), "No closed appointment");
+        return closedAppointments[msg.sender].data;
     }
 }
